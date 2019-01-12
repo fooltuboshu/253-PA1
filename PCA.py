@@ -30,7 +30,7 @@ def getImage48(images):
 
 newImage48, randPepList = getImage48(images)
 print(randPepList)
-# print(len(newImage48))
+print(len(newImage48))
 # display_face(newImage48[0])
 
 # def getLastTwo(randPepList, pepList):
@@ -48,15 +48,36 @@ print(newImage48[0].shape)
 def getRawMatrix(a): # a is image48
 	rowNob = a[0].shape[0]
 	colNob = a[0].shape[1]
-	dataMatrix = np.zeros((48, rowNob*colNob))
-	print(a[0].reshape(rowNob*colNob, 1).shape)
-	for it in range(48):
-		dataMatrix[it,:] = a[it].reshape(rowNob*colNob, 1).ravel()
+	dataMatrix = np.zeros((42, rowNob*colNob))
+	#print(a[0].reshape(rowNob*colNob, 1).shape)
+	for it in range(42):
+		dataMatrix[it,:] = a[it].reshape(rowNob*colNob, 1).flatten()
 
 	return dataMatrix
 print(getRawMatrix(newImage48).shape)
 
 def PCA(dataMatrix):
-	
+	dataMatrix -= dataMatrix.mean(axis = 1) #.flatten()
+	mag_data = np.dot(dataMatrix, dataMatrix)
+	evals, evecs = np.linalg.eig(mag_data)
+
+	idx = np.argsort(evals)[::-1]
+	evecs = evecs[:,idx]
+	evals = evals[idx]
+	newEvecs = np.dot(dataMatrix.T, evecs)
+
+	return newEvecs
+
+def displayEigFace(evecs):
+	K = 3
+	EigFace = []
+	for it in range(42):
+		EigFace[it] = evecs[:, it].reshape(380, 240)
+	for it in range(K):
+		EigFace[it].show()
+
+displayEigFace(PCA(getRawMatrix(newImage48)))
+
+
 
 
