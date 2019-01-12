@@ -55,26 +55,31 @@ def getRawMatrix(a): # a is image48
 
 	return dataMatrix
 print(getRawMatrix(newImage48).shape)
+data = getRawMatrix(newImage48)
+# print(data - data.mean(axis = 0))
 
 def PCA(dataMatrix):
-	dataMatrix -= dataMatrix.mean(axis = 1) #.flatten()
-	mag_data = np.dot(dataMatrix, dataMatrix)
+	dataMatrix -= dataMatrix.mean(axis = 0)#.ravel() #.flatten()
+	mag_data = np.dot(dataMatrix, dataMatrix.T)
 	evals, evecs = np.linalg.eig(mag_data)
 
 	idx = np.argsort(evals)[::-1]
-	evecs = evecs[:,idx]
-	evals = evals[idx]
+
+	evecs = evecs[:,idx]/np.linalg.norm(evecs[:,idx])#
+	evals = evals[idx]	
 	newEvecs = np.dot(dataMatrix.T, evecs)
 
 	return newEvecs
-
+eves = PCA(data)
+print(eves[:,1])
 def displayEigFace(evecs):
 	K = 3
 	EigFace = []
 	for it in range(42):
-		EigFace[it] = evecs[:, it].reshape(380, 240)
+		EigFace.append(evecs[:, it].reshape(380, 240))
+	print(EigFace[1].shape)
 	for it in range(K):
-		EigFace[it].show()
+		display_face(EigFace[it])
 
 displayEigFace(PCA(getRawMatrix(newImage48)))
 
