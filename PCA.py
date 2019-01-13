@@ -53,51 +53,70 @@ def getRawMatrix(a): # a is image48
 	dataMatrix = np.zeros((42, rowNob*colNob))
 	#print(a[0].reshape(rowNob*colNob, 1).shape)
 	for it in range(42):
-		dataMatrix[it,:] = a[it].reshape(rowNob*colNob, 1).flatten()
+		dataMatrix[it,:] = a[it].reshape(rowNob*colNob, 1).flatten().astype(float)
 
 	return dataMatrix
 # print(getRawMatrix(newImage48).shape)
 data = getRawMatrix(newImage48)
 # print(data.mean(axis = 0))#.shape)
+print(data.shape)
+
+# def PCA(dataMatrix):
+# 	raw_mean = dataMatrix.mean(axis = 0)
+# 	newEvecs = []
+# 	for i in range(42):
+# 		dataMatrix[i, :] = dataMatrix[i, :] - raw_mean
+# 	mag_data = np.dot(dataMatrix, dataMatrix.T)
+# 	evals, evecs = np.linalg.eig(mag_data)
+# 	#print(evals.shape)
+# 	index = np.argsort(evals)[::-1]
+# 	for i in range(42):
+# 		newEvecs[:,i] = 
+
+# PCA(data)
+
+
 
 def PCA(data):
-	dataMatrix = data
-	dataMean = dataMatrix.mean(axis = 0)
-	newEvecs = np.zeros((91200, 42))
-	dataMatrix -= dataMatrix.mean(axis = 0)#.ravel() #.flatten()
-	mag_data = np.dot(dataMatrix, dataMatrix.T)
+	dataMatrix = data.T
+	dataMean = dataMatrix.mean(axis = 1)
+	newEvecs = np.zeros((42, 19200))
+	for it in range(42):
+		dataMatrix[:, it] -= dataMatrix.mean(axis = 1)#.ravel() #.flatten()
+	mag_data = np.dot(dataMatrix.T, dataMatrix)
 	evals, evecs = np.linalg.eig(mag_data)
 	# print(evecs)
 	idx = np.argsort(evals)[::-1]
 	evecs[:] = evecs[:,idx]
 
 	evals = evals[idx]	
-	for i in range(42):
-		newEvecs[:,i] = np.dot(dataMatrix.T, evecs[:,i]) + dataMean #data.mean(axis = 0).flatten()
+	# for i in range(42):
+	# 	newEvecs[:,i] = np.dot(data.T, evecs[:,i]) #+ dataMean #data.mean(axis = 0).flatten()
 
+	newEvecs = np.dot(data.T, evecs)
 	return newEvecs
 eves = PCA(data)
 # print(eves[:,1])
 def displayEigFace(evecs):
-	K = 3
+	K = 20
 	EigFace = []
 	for it in range(42):
 		EigFace.append(evecs[:, it].reshape(380, 240))
-		plt.imshow(evecs[:, it].reshape(380,240),[])
+		# plt.imshow(evecs[:, it].reshape(380,240),[])
 	print(EigFace[1].shape)
 	for it in range(K):
-		plt.imshow(EigFace[it],[])
+		# plt.imshow(EigFace[it],[])
+		display_face(EigFace[it])
 
 displayEigFace(PCA(getRawMatrix(newImage48)))
 def representFace():
 	evecs = PCA(getRawMatrix(newImage48))
 	weight = np.dot(data[2, :], evecs)
 	display_face(newImage48[2])
-	recoverImage2 = np.dot(evecs, weight.T) #+ data.mean(axis = 0).flatten()
+	recoverImage2 = np.dot(evecs, weight.T) + data.mean(axis = 0).flatten()
 	recoverImageMatrix = recoverImage2.reshape(380,240)
 	display_face(recoverImageMatrix)
 
 # representFace()
-
 
 
