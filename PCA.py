@@ -108,7 +108,7 @@ def displayEigFace(evecs):
 		# plt.imshow(EigFace[it],[])
 		display_face(EigFace[it])
 
-displayEigFace(PCA(getRawMatrix(newImage48)))
+#displayEigFace(PCA(getRawMatrix(newImage48)))
 def representFace():
 	evecs = PCA(getRawMatrix(newImage48))
 	weight = np.dot(data[2, :], evecs)
@@ -120,3 +120,29 @@ def representFace():
 # representFace()
 
 
+
+
+dataT = getRawMatrix(newImage48).T
+meanDataT = dataT.mean(axis=0).flatten()
+dataT -= meanDataT
+U, S, VT = np.linalg.svd(dataT, full_matrices=False)
+V = VT.T
+k = 48
+V = V[:,:k]
+
+projectionMatrix = dataT.dot(V)
+print(projectionMatrix.shape)
+
+reconMatrix = projectionMatrix.dot(V.T)+meanDataT
+
+reconMatrix = reconMatrix.T
+
+display_face(reconMatrix[23].reshape(380,240))
+
+for i in range(6):
+
+	x = dataT.dot(V[i]) 
+
+	#x = 255*(x-min(x))/(max(x)-min(x))
+	x = (x.reshape(380,240))
+	plt.imagesc(x,[])
