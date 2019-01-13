@@ -137,12 +137,13 @@ reconMatrix = projectionMatrix.dot(V.T)+meanDataT
 
 reconMatrix = reconMatrix.T
 
-display_face(reconMatrix[23].reshape(380,240))
+#display_face(reconMatrix[23].reshape(380,240))
 
-for i in range(6):
+#for i in range(6):
 
-	x = dataT.dot(V[i]) 
+x = dataT.dot(V[0]) 
 
-	#x = 255*(x-min(x))/(max(x)-min(x))
-	x = (x.reshape(380,240))
-	plt.imagesc(x,[])
+#x = 255*(x-min(x))/(max(x)-min(x))
+x =  np.array(x.reshape(380,240))
+plt.imshow(x, cmap='gray')
+plt.show()
