@@ -39,8 +39,9 @@ lastTwoPep = list(set(pepList) - set(randPepList)) # get the last two people
 # print(newImage48[0].shape)
 
 def getRawMatrix(a): # a is image48
-	rowNob = a[0].shape[0]
-	colNob = a[0].shape[1]
+	#rowNob, colNob= a[0].shape
+	rowNob, colNob= 380, 240
+
 	dataMatrix = np.zeros((len(a), rowNob*colNob))
 	#print(a[0].reshape(rowNob*colNob, 1).shape)
 	for it in range(len(a)):
@@ -152,6 +153,8 @@ def PCA_MH(data_images, k):
 	#k = 48
 	V = V[:,:k]
 	eMatrix = dataT.dot(V)
+	for i in range(k):
+		eMatrix[:, i] = eMatrix[:, i]/np.linalg.norm(eMatrix[:, i], axis = 0)
 	print(eMatrix.shape)
 	return eMatrix
 
@@ -162,7 +165,7 @@ def plot_eignFace(eMatrix, k):
 		plt.imshow(temp_images[i], cmap = 'gray')
 		plt.show()
 
-# evecsMatrix = PCA_MH(data, 15)
-# plot_eignFace(evecsMatrix, 3)
+evecsMatrix = PCA_MH(data, 15)
+plot_eignFace(evecsMatrix, 3)
 
 
