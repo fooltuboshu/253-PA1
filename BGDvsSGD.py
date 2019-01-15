@@ -26,7 +26,7 @@ def BGD(X_b, Y):
 	theta = np.random.randn(d,1)/10
 
 	for it in range(num_iteration):
-		htheta = X_b.dot(theta)
+		htheta = 1/(1+np.exp(-X_b.dot(theta)))
 		alpha = 1/(np.sqrt(num_iteration)) * alpha0
 		theta = theta - (1/N)*alpha*(X_b.T.dot(htheta - Y))
 		cost[it] = cal_cost(theta, X_b, Y)
